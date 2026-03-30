@@ -48,7 +48,7 @@ public class VehicleController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get vehicle by id within current tenant")
-    public VehicleResponse get(@PathVariable UUID id) {
+    public VehicleResponse get(@PathVariable(name = "id") UUID id) {
         return vehicleApplicationService.get(id);
     }
 
@@ -60,26 +60,26 @@ public class VehicleController {
                             + "subscription; results remain scoped to X-Tenant-Id.")
     public Page<VehicleResponse> list(
             @PageableDefault(size = 20) Pageable pageable,
-            @RequestParam(required = false) String model,
-            @RequestParam(required = false) VehicleStatus status,
-            @RequestParam(required = false) BigDecimal priceMin,
-            @RequestParam(required = false) BigDecimal priceMax,
+            @RequestParam(name = "model", required = false) String model,
+            @RequestParam(name = "status", required = false) VehicleStatus status,
+            @RequestParam(name = "priceMin", required = false) BigDecimal priceMin,
+            @RequestParam(name = "priceMax", required = false) BigDecimal priceMax,
             @Parameter(description = "Filter by dealer subscription, e.g. PREMIUM")
-                    @RequestParam(required = false)
+                    @RequestParam(name = "subscription", required = false)
                     SubscriptionType subscription) {
         return vehicleApplicationService.list(pageable, model, status, priceMin, priceMax, subscription);
     }
 
     @PatchMapping("/{id}")
     @Operation(summary = "Partially update a vehicle")
-    public VehicleResponse patch(@PathVariable UUID id, @Valid @RequestBody VehicleUpdateRequest request) {
+    public VehicleResponse patch(@PathVariable(name = "id") UUID id, @Valid @RequestBody VehicleUpdateRequest request) {
         return vehicleApplicationService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete a vehicle")
-    public void delete(@PathVariable UUID id) {
+    public void delete(@PathVariable(name = "id") UUID id) {
         vehicleApplicationService.delete(id);
     }
 }
