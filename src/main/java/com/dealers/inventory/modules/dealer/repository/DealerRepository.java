@@ -15,6 +15,8 @@ public interface DealerRepository extends JpaRepository<Dealer, UUID> {
 
     Page<Dealer> findAllByTenantId(UUID tenantId, Pageable pageable);
 
+    boolean existsByEmail(String email);
+
     @Query("select d.subscriptionType as subscriptionType, count(d) as cnt from Dealer d group by d.subscriptionType")
     java.util.List<SubscriptionCountProjection> countGroupedBySubscription();
 

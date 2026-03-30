@@ -43,7 +43,7 @@ public class DealerController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get dealer by id within current tenant")
-    public DealerResponse get(@PathVariable UUID id) {
+    public DealerResponse get(@PathVariable(name = "id") UUID id) {
         return dealerApplicationService.get(id);
     }
 
@@ -55,14 +55,14 @@ public class DealerController {
 
     @PatchMapping("/{id}")
     @Operation(summary = "Partially update a dealer")
-    public DealerResponse patch(@PathVariable UUID id, @Valid @RequestBody DealerUpdateRequest request) {
+    public DealerResponse patch(@PathVariable(name = "id") UUID id, @Valid @RequestBody DealerUpdateRequest request) {
         return dealerApplicationService.update(id, request);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete a dealer")
-    public void delete(@PathVariable UUID id) {
+    public void delete(@PathVariable(name = "id") UUID id) {
         dealerApplicationService.delete(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.dealers.inventory.modules.dealer.application;
 
 import com.dealers.inventory.common.domain.SubscriptionType;
+import com.dealers.inventory.common.exception.BadRequestException;
 import com.dealers.inventory.common.exception.CrossTenantAccessException;
 import com.dealers.inventory.common.exception.ResourceNotFoundException;
 import com.dealers.inventory.modules.dealer.api.dto.DealerCreateRequest;
@@ -26,12 +27,16 @@ public class DealerApplicationService {
 
     @Transactional
     public DealerResponse create(DealerCreateRequest request) {
+        String email = request.getEmail().trim().toLowerCase();
+        if (dealerRepository.existsByEmail(email)) {
+            throw new BadRequestException("Dealer with this email already exists");
+        }
         UUID tenantId = TenantContext.requireTenantId();
         Dealer dealer = Dealer.builder()
                 .id(UUID.randomUUID())
                 .tenantId(tenantId)
                 .name(request.getName().trim())
-                .email(request.getEmail().trim().toLowerCase())
+                .email(email)
                 .subscriptionType(request.getSubscriptionType())
                 .build();
         return toResponse(dealerRepository.save(dealer));
@@ -56,7 +61,11 @@ public class DealerApplicationService {
             dealer.setName(request.getName().trim());
         }
         if (request.getEmail() != null) {
-            dealer.setEmail(request.getEmail().trim().toLowerCase());
+            String newEmail = request.getEmail().trim().toLowerCase();
+            if (!newEmail.equals(dealer.getEmail()) && dealerRepository.existsByEmail(newEmail)) {
+                throw new BadRequestException("Dealer with this email already exists");
+            }
+            dealer.setEmail(newEmail);
         }
         if (request.getSubscriptionType() != null) {
             dealer.setSubscriptionType(request.getSubscriptionType());
